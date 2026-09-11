@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TigerCode Academy — Coding & Game Design for Kids</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Quicksand & Kalam for Cozy Stationery Aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kalam:wght@400;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti for Celebration Effects -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* Theme Definitions with CSS Variables */
+    :root, [data-theme="cozy-scrapbook"] {
+      --bg-main: #fcf8f2;
+      --bg-card: #fffdf9;
+      --bg-card-alt: #f8f1e5;
+      --border-color: #e5d5c0;
+      --text-main: #4a3e3d;
+      --text-muted: #7c6a68;
+      --accent-yellow: #fef08a;
+      --accent-orange: #ffedd5;
+      --accent-pink: #fce7f3;
+      --accent-green: #dcfce7;
+      --primary: #ea580c;
+      --primary-hover: #c2410c;
+      --tape-color: rgba(254, 240, 138, 0.6);
+      --font-heading: 'Kalam', cursive;
+      --font-body: 'Quicksand', sans-serif;
+    }
+
+    [data-theme="soft-pastel"] {
+      --bg-main: #fdf2f8;
+      --bg-card: #ffffff;
+      --bg-card-alt: #fce7f3;
+      --border-color: #fbcfe8;
+      --text-main: #475569;
+      --text-muted: #64748b;
+      --accent-yellow: #fef9c3;
+      --accent-orange: #ffedd5;
+      --accent-pink: #f472b6;
+      --accent-green: #e0e7ff;
+      --primary: #ec4899;
+      --primary-hover: #db2777;
+      --tape-color: rgba(244, 114, 182, 0.3);
+      --font-heading: 'Kalam', cursive;
+      --font-body: 'Quicksand', sans-serif;
+    }
+
+    [data-theme="dark-cozy"] {
+      --bg-main: #1c1917;
+      --bg-card: #292524;
+      --bg-card-alt: #383531;
+      --border-color: #44403c;
+      --text-main: #f5f5f4;
+      --text-muted: #a8a29e;
+      --accent-yellow: #854d0e;
+      --accent-orange: #9a3412;
+      --accent-pink: #831843;
+      --accent-green: #14532d;
+      --primary: #f97316;
+      --primary-hover: #fb923c;
+      --tape-color: rgba(249, 115, 22, 0.3);
+      --font-heading: 'Kalam', cursive;
+      --font-body: 'Quicksand', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .font-handwriting {
+      font-family: var(--font-heading);
+    }
+
+    /* Stationery Paper Cards */
+    .paper-card {
+      background-color: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: 1.25rem;
+      box-shadow: 4px 6px 0px 0px var(--border-color);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .paper-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 6px 10px 0px 0px var(--border-color);
+    }
+
+    .polaroid {
+      background: white;
+      padding: 12px 12px 24px 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: 3px 5px 12px rgba(0,0,0,0.08);
+      transform: rotate(-1.5deg);
+    }
+
+    /* Washi Tape Accent Effect */
+    .washi-tape {
+      position: absolute;
+      top: -12px;
+      left: 30%;
+      width: 80px;
+      height: 24px;
+      background-color: var(--tape-color);
+      transform: rotate(-3deg);
+      opacity: 0.85;
+      z-index: 10;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border-left: 2px dashed rgba(0,0,0,0.1);
+      border-right: 2px dashed rgba(0,0,0,0.1);
+    }
+
+    .washi-tape-right {
+      left: auto;
+      right: 25%;
+      transform: rotate(4deg);
+    }
+
+    /* Scratch Code Block UI */
+    .code-block {
+      user-select: none;
+      cursor: grab;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .code-block:active {
+      cursor: grabbing;
+      transform: scale(1.02);
+    }
+
+    /* Dotted quest path */
+    .quest-line {
+      stroke-dasharray: 8;
+      animation: dash 30s linear infinite;
+    }
+    @keyframes dash {
+      to {
+        stroke-dashoffset: -1000;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-amber-200">
+
+  <header class="sticky top-0 z-40 bg-[var(--bg-card)]/90 backdrop-blur-md border-b-2 border-[var(--border-color)] px-4 lg:px-8 py-3 transition-colors">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- Logo -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchPage('home')">
+        <div class="w-11 h-11 rounded-2xl bg-amber-200 border-2 border-[var(--border-color)] flex items-center justify-center shadow-sm text-2xl transform -rotate-3 hover:rotate-0 transition-transform">
+          ✏️
+        </div>
+        <div>
+          <span class="font-handwriting text-2xl font-bold tracking-wide text-[var(--primary)]">TigerCode</span>
+          <span class="text-xs block text-[var(--text-muted)] font-semibold -mt-1 tracking-wider uppercase" data-i18n="academy_sub">Creative Coding Academy</span>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs -->
+      <nav class="hidden md:flex items-center gap-1 bg-[var(--bg-card-alt)] p-1.5 rounded-2xl border-2 border-[var(--border-color)]">
+        <button onclick="switchPage('home')" id="nav-home" class="nav-btn px-4 py-2 rounded-xl text-sm font-bold transition-all bg-[var(--bg-card)] text-[var(--primary)] shadow-sm">
+          <i data-lucide="home" class="w-4 h-4 inline mr-1.5"></i><span data-i18n="nav_home">Home</span>
+        </button>
+        <button onclick="switchPage('courses')" id="nav-courses" class="nav-btn px-4 py-2 rounded-xl text-sm font-bold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all">
+          <i data-lucide="map" class="w-4 h-4 inline mr-1.5"></i><span data-i18n="nav_courses">Courses</span>
+        </button>
+        <button onclick="switchPage('quizzes')" id="nav-quizzes" class="nav-btn px-4 py-2 rounded-xl text-sm font-bold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all">
+          <i data-lucide="gamepad-2" class="w-4 h-4 inline mr-1.5"></i><span data-i18n="nav_quizzes">Quizzes</span>
+        </button>
+        <button onclick="switchPage('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-xl text-sm font-bold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all">
+          <i data-lucide="award" class="w-4 h-4 inline mr-1.5"></i><span data-i18n="nav_dashboard">Student Hub</span>
+        </button>
+        <button onclick="openParentModal()" id="nav-parent" class="nav-btn px-4 py-2 rounded-xl text-sm font-bold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all">
+          <i data-lucide="shield-check" class="w-4 h-4 inline mr-1.5"></i><span data-i18n="nav_parent">Parents</span>
+        </button>
+      </nav>
+
+      <!-- Right Controls: Theme, Language, Schema Button -->
+      <div class="flex items-center gap-2">
+        
+        <!-- Database Schema Modal Trigger -->
+        <button onclick="openModal('schema-modal')" class="p-2 rounded-xl border-2 border-[var(--border-color)] bg-[var(--bg-card-alt)] hover:bg-[var(--bg-card)] text-xs font-bold flex items-center gap-1.5 transition-colors" title="Database Relational Schema">
+          <i data-lucide="database" class="w-4 h-4 text-amber-600"></i>
+          <span class="hidden sm:inline" data-i18n="schema_btn">Database</span>
+        </button>
+
+        <!-- Theme Switcher Selector -->
+        <div class="relative">
+          <select id="theme-select" onchange="changeTheme(this.value)" class="appearance-none bg-[var(--bg-card-alt)] border-2 border-[var(--border-color)] text-[var(--text-main)] text-xs font-bold rounded-xl px-3 py-2 pr-8 cursor-pointer focus:outline-none">
+            <option value="cozy-scrapbook">🎨 Cozy Scrapbook</option>
+            <option value="soft-pastel">🌸 Soft Pastel</option>
+            <option value="dark-cozy">🌙 Dark Cozy</option>
+          </select>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 absolute right-2.5 top-3 pointer-events-none opacity-60"></i>
+        </div>
+
+        <!-- Language Switcher Selector -->
+        <div class="relative">
+          <select id="lang-select" onchange="changeLanguage(this.value)" class="appearance-none bg-[var(--bg-card-alt)] border-2 border-[var(--border-color)] text-[var(--text-main)] text-xs font-bold rounded-xl px-3 py-2 pr-8 cursor-pointer focus:outline-none">
+            <option value="en">🇬🇧 English</option>
+            <option value="da">🇦🇫 دری (Dari)</option>
+            <option value="ps">🇦🇫 پښتو (Pashto)</option>
+          </select>
+          <i data-lucide="globe" class="w-3.5 h-3.5 absolute right-2.5 top-3 pointer-events-none opacity-60"></i>
+        </div>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl border-2 border-[var(--border-color)] bg-[var(--bg-card-alt)]">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu" class="hidden md:hidden mt-3 pt-3 border-t-2 border-[var(--border-color)] flex flex-col gap-2">
+      <button onclick="switchPage('home'); toggleMobileMenu()" class="p-2.5 rounded-xl font-bold text-left hover:bg-[var(--bg-card-alt)]" data-i18n="nav_home">Home</button>
+      <button onclick="switchPage('courses'); toggleMobileMenu()" class="p-2.5 rounded-xl font-bold text-left hover:bg-[var(--bg-card-alt)]" data-i18n="nav_courses">Courses</button>
+      <button onclick="switchPage('quizzes'); toggleMobileMenu()" class="p-2.5 rounded-xl font-bold text-left hover:bg-[var(--bg-card-alt)]" data-i18n="nav_quizzes">Quizzes</button>
+      <button onclick="switchPage('dashboard'); toggleMobileMenu()" class="p-2.5 rounded-xl font-bold text-left hover:bg-[var(--bg-card-alt)]" data-i18n="nav_dashboard">Student Hub</button>
+      <button onclick="openParentModal(); toggleMobileMenu()" class="p-2.5 rounded-xl font-bold text-left hover:bg-[var(--bg-card-alt)]" data-i18n="nav_parent">Parent Area</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-8">
+
+    <!-- 1. HOME PAGE -->
+    <section id="page-home" class="page-section space-y-12">
+      
+      <!-- Hero Section -->
+      <div class="paper-card p-8 md:p-12 overflow-hidden relative">
+        <div class="washi-tape"></div>
+        <div class="washi-tape washi-tape-right"></div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-7 space-y-6">
+            <div class="inline-flex items-center gap-2 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 px-3 py-1.5 rounded-full text-xs font-bold border border-amber-300">
+              <span class="animate-pulse">✨</span> <span data-i18n="hero_badge">Fun Coding for Ages 8–15</span>
+            </div>
+            
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold font-handwriting leading-tight text-[var(--text-main)]">
+              <span data-i18n="hero_title_1">Build Games & Code Stories with</span> 
+              <span class="text-[var(--primary)] underline decoration-wavy decoration-amber-300" data-i18n="hero_title_2">Visual Blocks!</span>
+            </h1>
+            
+            <p class="text-lg text-[var(--text-muted)] leading-relaxed" data-i18n="hero_desc">
+              Welcome to a cozy, creative space where algorithmic thinking turns into playful games, interactive art, and magical web projects. No prior coding experience needed!
+            </p>
+            
+            <div class="flex flex-wrap gap-4 pt-2">
+              <button onclick="switchPage('courses')" class="px-7 py-3.5 bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-bold rounded-2xl shadow-md border-2 border-black/10 transform active:scale-95 transition-all flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                <span data-i18n="start_quest_btn">Start Your Quest</span>
+              </button>
+              <button onclick="switchPage('quizzes')" class="px-6 py-3.5 bg-[var(--bg-card-alt)] hover:bg-[var(--border-color)] font-bold rounded-2xl border-2 border-[var(--border-color)] transition-all flex items-center gap-2">
+                <i data-lucide="puzzle" class="w-4 h-4"></i>
+                <span data-i18n="try_puzzle_btn">Try Code Puzzles</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Illustrated Creative Stationery Stack -->
+          <div class="lg:col-span-5 flex justify-center">
+            <div class="polaroid relative max-w-sm w-full">
+              <div class="bg-amber-50 dark:bg-stone-800 rounded-lg p-6 border border-dashed border-amber-300 text-center space-y-4">
+                <div class="text-6xl animate-bounce">📚</div>
+                <div class="font-handwriting text-2xl font-bold text-[var(--text-main)]" data-i18n="polaroid_caption">My First Game Quest</div>
+                <div class="flex justify-center gap-2">
+                  <span class="bg-pink-100 text-pink-700 text-xs px-2.5 py-1 rounded-full font-bold">Block Logic</span>
+                  <span class="bg-green-100 text-green-700 text-xs px-2.5 py-1 rounded-full font-bold">Games</span>
+                  <span class="bg-blue-100 text-blue-700 text-xs px-2.5 py-1 rounded-full font-bold">Puzzles</span>
+                </div>
+              </div>
+              <p class="text-center font-handwriting text-lg mt-3 text-[var(--text-muted)]" data-i18n="polaroid_sub">Handcrafted Learning Experience</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Summary Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="paper-card p-6 space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center text-2xl border border-pink-200">
+            🧩
+          </div>
+          <h3 class="text-xl font-bold font-handwriting" data-i18n="feat_1_title">Scratch Block Logic</h3>
+          <p class="text-sm text-[var(--text-muted)]" data-i18n="feat_1_desc">Drag, drop, and snap code puzzle pieces together to control characters and design animations.</p>
+        </div>
+
+        <div class="paper-card p-6 space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl border border-amber-200">
+            🎮
+          </div>
+          <h3 class="text-xl font-bold font-handwriting" data-i18n="feat_2_title">Game Creation</h3>
+          <p class="text-sm text-[var(--text-muted)]" data-i18n="feat_2_desc">Turn your imaginative ideas into playable mini-games while mastering variables and physics.</p>
+        </div>
+
+        <div class="paper-card p-6 space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl border border-emerald-200">
+            🏅
+          </div>
+          <h3 class="text-xl font-bold font-handwriting" data-i18n="feat_3_title">Badges & Certificates</h3>
+          <p class="text-sm text-[var(--text-muted)]" data-i18n="feat_3_desc">Earn verified completion certificates and fun badge stickers as you unlock new coding levels.</p>
+        </div>
+
+      </div>
+
+      <!-- Interactive Widget Row: Pomodoro Study Helper & Mini Code Quiz -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Pomodoro Timer Widget -->
+        <div class="lg:col-span-5 paper-card p-6 flex flex-col justify-between">
+          <div class="washi-tape"></div>
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold font-handwriting flex items-center gap-2">
+                <span>⏱️</span> <span data-i18n="pomo_title">Cozy Focus Timer</span>
+              </h3>
+              <span class="text-xs px-2.5 py-1 bg-[var(--bg-card-alt)] rounded-full border border-[var(--border-color)] font-bold" data-i18n="pomo_subtitle">Study Helper</span>
+            </div>
+            <p class="text-sm text-[var(--text-muted)] mb-6" data-i18n="pomo_desc">Take structured 25-minute study sprints with 5-minute rest breaks for optimal focus.</p>
+            
+            <div class="text-center bg-[var(--bg-card-alt)] py-8 rounded-2xl border-2 border-[var(--border-color)] mb-6">
+              <div id="timer-display" class="text-5xl font-bold font-mono tracking-wider text-[var(--primary)]">25:00</div>
+              <p id="timer-status" class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest mt-2" data-i18n="pomo_focus">Focus Session</p>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <button onclick="toggleTimer()" id="timer-start-btn" class="flex-1 py-2.5 bg-[var(--primary)] text-white font-bold rounded-xl hover:opacity-90 transition-opacity">
+              Start Focus
+            </button>
+            <button onclick="resetTimer()" class="px-4 py-2.5 bg-[var(--bg-card-alt)] border border-[var(--border-color)] font-bold rounded-xl hover:bg-[var(--border-color)]">
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Mini Quick Code Check Widget -->
+        <div class="lg:col-span-7 paper-card p-6">
+          <div class="washi-tape washi-tape-right"></div>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold font-handwriting flex items-center gap-2">
+              <span>💡</span> <span data-i18n="mini_quiz_title">Daily Brain Teaser</span>
+            </h3>
+            <span class="text-xs px-2 py-1 bg-amber-100 text-amber-800 rounded-lg font-bold">+50 XP</span>
+          </div>
+
+          <div class="space-y-4">
+            <p class="text-sm font-semibold text-[var(--text-main)]" data-i18n="mini_quiz_question">
+              Which code block makes the character repeat an action 10 times automatically?
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="mini-quiz-options">
+              <button onclick="checkMiniQuiz(this, false)" class="p-3 text-left border-2 border-[var(--border-color)] rounded-xl hover:bg-[var(--bg-card-alt)] transition-colors font-mono text-sm">
+                A) if (on Edge)
+              </button>
+              <button onclick="checkMiniQuiz(this, true)" class="p-3 text-left border-2 border-[var(--border-color)] rounded-xl hover:bg-[var(--bg-card-alt)] transition-colors font-mono text-sm">
+                B) repeat (10)
+              </button>
+              <button onclick="checkMiniQuiz(this, false)" class="p-3 text-left border-2 border-[var(--border-color)] rounded-xl hover:bg-[var(--bg-card-alt)] transition-colors font-mono text-sm">
+                C) set variable to 0
+              </button>
+            </div>
+
+            <div id="mini-quiz-feedback" class="hidden p-3 rounded-xl text-sm font-bold"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- 2. COURSES & LESSONS PAGE -->
+    <section id="page-courses" class="page-section hidden space-y-8">
+      
+      <!-- Quest Map Header -->
+      <div class="paper-card p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div>
+          <h2 class="text-3xl font-bold font-handwriting text-[var(--primary)]" data-i18n="courses_title">Interactive Learning Roadmap</h2>
+          <p class="text-sm text-[var(--text-muted)] mt-1" data-i18n="courses_subtitle">Complete lessons in sequence to unlock game development challenges!</p>
+        </div>
+        
+        <div class="flex items-center gap-4 bg-[var(--bg-card-alt)] p-3 rounded-2xl border border-[var(--border-color)]">
+          <div class="text-center px-3">
+            <span class="block text-xs font-bold text-[var(--text-muted)]" data-i18n="track_progress">Track Progress</span>
+            <span class="text-xl font-bold text-[var(--primary)]" id="roadmap-progress-text">2 / 5 Unlocked</span>
+          </div>
+          <div class="w-24 bg-stone-200 rounded-full h-3">
+            <div id="roadmap-progress-bar" class="bg-[var(--primary)] h-3 rounded-full" style="width: 40%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game-like Roadmap Visual Layout -->
+      <div class="paper-card p-8 min-h-[400px] relative overflow-x-auto">
+        <div class="washi-tape"></div>
+        <div class="min-w-[700px] flex justify-between items-center relative py-12 px-8">
+          
+          <!-- Connecting Path Line -->
+          <svg class="absolute top-1/2 left-0 w-full h-12 -translate-y-1/2 pointer-events-none z-0" preserveAspectRatio="none">
+            <path d="M 50 25 Q 200 0, 350 25 T 650 25" fill="none" stroke="var(--border-color)" stroke-width="4" class="quest-line" />
+          </svg>
+
+          <!-- Level Node 1 -->
+          <div class="relative z-10 flex flex-col items-center">
+            <button onclick="openLesson(1)" class="w-16 h-16 rounded-2xl bg-emerald-400 text-white font-bold text-2xl border-4 border-white shadow-lg hover:scale-110 transition-transform flex items-center justify-center">
+              1
+            </button>
+            <span class="mt-3 font-bold font-handwriting text-base" data-i18n="node_1_title">Algorithms 101</span>
+            <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full mt-1" data-i18n="status_completed">Completed</span>
+          </div>
+
+          <!-- Level Node 2 -->
+          <div class="relative z-10 flex flex-col items-center">
+            <button onclick="openLesson(2)" class="w-16 h-16 rounded-2xl bg-amber-400 text-white font-bold text-2xl border-4 border-white shadow-lg hover:scale-110 transition-transform flex items-center justify-center animate-pulse">
+              2
+            </button>
+            <span class="mt-3 font-bold font-handwriting text-base" data-i18n="node_2_title">Scratch Loops</span>
+            <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full mt-1" data-i18n="status_active">Current</span>
+          </div>
+
+          <!-- Level Node 3 -->
+          <div class="relative z-10 flex flex-col items-center opacity-60">
+            <button onclick="openLesson(3)" class="w-16 h-16 rounded-2xl bg-stone-300 text-stone-600 font-bold text-2xl border-4 border-white shadow-md cursor-pointer flex items-center justify-center">
+              <i data-lucide="lock" class="w-6 h-6"></i>
+            </button>
+            <span class="mt-3 font-bold font-handwriting text-base" data-i18n="node_3_title">If-Then Logic</span>
+            <span class="text-xs bg-stone-200 text-stone-600 font-bold px-2 py-0.5 rounded-full mt-1" data-i18n="status_locked">Locked</span>
+          </div>
+
+          <!-- Level Node 4 -->
+          <div class="relative z-10 flex flex-col items-center opacity-60">
+            <button onclick="openLesson(4)" class="w-16 h-16 rounded-2xl bg-stone-300 text-stone-600 font-bold text-2xl border-4 border-white shadow-md cursor-pointer flex items-center justify-center">
+              <i data-lucide="lock" class="w-6 h-6"></i>
+            </button>
+            <span class="mt-3 font-bold font-handwriting text-base" data-i18n="node_4_title">Variables & Score</span>
+            <span class="text-xs bg-stone-200 text-stone-600 font-bold px-2 py-0.5 rounded-full mt-1" data-i18n="status_locked">Locked</span>
+          </div>
+
+          <!-- Level Node 5 -->
+          <div class="relative z-10 flex flex-col items-center opacity-60">
+            <button onclick="openLesson(5)" class="w-16 h-16 rounded-2xl bg-purple-400 text-white font-bold text-2xl border-4 border-white shadow-md cursor-pointer flex items-center justify-center">
+              🏆
+            </button>
+            <span class="mt-3 font-bold font-handwriting text-base" data-i18n="node_5_title">Game Capstone</span>
+            <span class="text-xs bg-stone-200 text-stone-600 font-bold px-2 py-0.5 rounded-full mt-1" data-i18n="status_locked">Locked</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Interactive Block-Based Code Lab Simulator Section -->
+      <div class="paper-card p-6 space-y-6">
+        <div class="flex items-center justify-between border-b-2 border-[var(--border-color)] pb-4">
+          <div>
+            <h3 class="text-2xl font-bold font-handwriting text-[var(--primary)] flex items-center gap-2">
+              <span>🧩</span> <span data-i18n="code_lab_title">Block Coding Simulator</span>
+            </h3>
+            <p class="text-xs text-[var(--text-muted)]" data-i18n="code_lab_sub">Assemble visual code blocks to steer the star sprite to the gold star target!</p>
+          </div>
+          <button onclick="resetCodeLab()" class="px-3 py-1.5 text-xs font-bold border border-[var(--border-color)] bg-[var(--bg-card-alt)] rounded-lg hover:bg-[var(--border-color)]">
+            Reset Stage
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Block Toolbox -->
+          <div class="lg:col-span-4 bg-[var(--bg-card-alt)] p-4 rounded-xl border border-[var(--border-color)] space-y-3">
+            <h4 class="font-bold text-xs uppercase tracking-wider text-[var(--text-muted)]" data-i18n="toolbox">Toolbox Blocks</h4>
+            <div class="space-y-2">
+              <div onclick="addBlockToWorkspace('Move Forward 20px')" class="code-block bg-blue-500 text-white text-xs font-bold p-3 rounded-lg flex items-center justify-between shadow-sm hover:brightness-110">
+                <span><span>➡️</span> Move Forward 20px</span>
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              </div>
+              <div onclick="addBlockToWorkspace('Turn Right 90°')" class="code-block bg-amber-500 text-white text-xs font-bold p-3 rounded-lg flex items-center justify-between shadow-sm hover:brightness-110">
+                <span><span>🔄</span> Turn Right 90°</span>
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              </div>
+              <div onclick="addBlockToWorkspace('Repeat Loop (3x)')" class="code-block bg-purple-500 text-white text-xs font-bold p-3 rounded-lg flex items-center justify-between shadow-sm hover:brightness-110">
+                <span><span>🔁</span> Repeat Loop (3x)</span>
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Code Workspace Assembly -->
+          <div class="lg:col-span-4 border-2 border-dashed border-[var(--border-color)] p-4 rounded-xl flex flex-col justify-between min-h-[220px]">
+            <div>
+              <h4 class="font-bold text-xs uppercase tracking-wider text-[var(--text-muted)] mb-3" data-i18n="workspace">Your Code Stack</h4>
+              <div id="code-workspace" class="space-y-2">
+                <!-- Stacked items appear here dynamically -->
+                <p id="empty-workspace-msg" class="text-xs text-[var(--text-muted)] italic text-center py-6">Click blocks from the toolbox to stack code here!</p>
+              </div>
+            </div>
+
+            <button onclick="runBlockCode()" class="mt-4 w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-md flex items-center justify-center gap-2">
+              <i data-lucide="play" class="w-4 h-4 fill-white"></i>
+              <span data-i18n="run_code">Run Execution</span>
+            </button>
+          </div>
+
+          <!-- Canvas Stage Simulation Window -->
+          <div class="lg:col-span-4 bg-stone-900 rounded-xl p-4 flex flex-col items-center justify-between text-white relative min-h-[220px]">
+            <div class="w-full flex justify-between items-center text-xs text-stone-400">
+              <span>Stage Canvas Preview</span>
+              <span id="lab-coords">X: 20 | Y: 100</span>
+            </div>
+
+            <!-- Simulated Sprite Stage Arena -->
+            <div class="relative w-full h-36 bg-stone-800 rounded-lg border border-stone-700 overflow-hidden my-2">
+              <div id="sprite-target" class="absolute top-12 right-6 text-2xl">⭐</div>
+              <div id="sprite-character" class="absolute top-12 left-6 text-2xl transition-all duration-500 transform">🐱</div>
+            </div>
+
+            <div id="lab-feedback" class="text-xs font-bold text-amber-300 text-center min-h-[1rem]">Ready to run your algorithm!</div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 3. INTERACTIVE QUIZZES PAGE -->
+    <section id="page-quizzes" class="page-section hidden space-y-8">
+      <div class="paper-card p-6 md:p-8">
+        <div class="washi-tape"></div>
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-3xl font-bold font-handwriting text-[var(--primary)]" data-i18n="quiz_title">Algorithmic Puzzle Challenges</h2>
+            <p class="text-sm text-[var(--text-muted)]" data-i18n="quiz_subtitle">Solve logic questions on loops, conditions, and variables to earn XP stickers!</p>
+          </div>
+          
+          <div class="flex items-center gap-2 bg-amber-100 dark:bg-amber-900/40 px-4 py-2 rounded-xl border border-amber-300">
+            <span class="text-2xl">⭐</span>
+            <div>
+              <span class="block text-xs text-[var(--text-muted)] font-bold">Total XP</span>
+              <span id="user-xp-display" class="font-bold text-amber-800 dark:text-amber-200">250 XP</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quiz Question Card Container -->
+        <div id="quiz-container" class="space-y-6">
+          <div class="bg-[var(--bg-card-alt)] p-6 rounded-2xl border-2 border-[var(--border-color)]">
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-xs font-bold uppercase tracking-wider text-[var(--primary)]" id="quiz-category">Loops & Iteration</span>
+              <span class="text-xs text-[var(--text-muted)] font-bold" id="quiz-number">Question 1 of 3</span>
+            </div>
+
+            <h3 class="text-lg md:text-xl font-bold text-[var(--text-main)] mb-6" id="quiz-question-text">
+              What will happen if a sprite enters a loop set to "repeat until touching wall", but never hits a wall?
+            </h3>
+
+            <div class="space-y-3" id="quiz-options-container">
+              <button onclick="handleQuizAnswer(0)" class="w-full text-left p-4 rounded-xl border-2 border-[var(--border-color)] bg-[var(--bg-card)] hover:border-[var(--primary)] font-semibold transition-all">
+                A) The character will stop immediately after 1 step.
+              </button>
+              <button onclick="handleQuizAnswer(1)" class="w-full text-left p-4 rounded-xl border-2 border-[var(--border-color)] bg-[var(--bg-card)] hover:border-[var(--primary)] font-semibold transition-all">
+                B) It creates an infinite loop that keeps running endlessly.
+              </button>
+              <button onclick="handleQuizAnswer(2)" class="w-full text-left p-4 rounded-xl border-2 border-[var(--border-color)] bg-[var(--bg-card)] hover:border-[var(--primary)] font-semibold transition-all">
+                C) The program deletes the sprite.
+              </button>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center pt-2">
+            <button onclick="prevQuestion()" id="prev-quiz-btn" class="px-5 py-2.5 rounded-xl border-2 border-[var(--border-color)] font-bold disabled:opacity-40" disabled>
+              Previous
+            </button>
+            <button onclick="nextQuestion()" id="next-quiz-btn" class="px-6 py-2.5 bg-[var(--primary)] text-white font-bold rounded-xl hover:bg-[var(--primary-hover)] transition-colors">
+              Next Question
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. STUDENT DASHBOARD PAGE -->
+    <section id="page-dashboard" class="page-section hidden space-y-8">
+      
+      <!-- Student Profile & XP Header -->
+      <div class="paper-card p-6 md:p-8">
+        <div class="washi-tape"></div>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          
+          <div class="md:col-span-8 flex items-center gap-5">
+            <div class="w-20 h-20 rounded-2xl bg-amber-200 border-2 border-[var(--border-color)] flex items-center justify-center text-4xl shadow-sm">
+              🎨
+            </div>
+            <div>
+              <h2 class="text-3xl font-bold font-handwriting text-[var(--text-main)]" id="dash-student-name">Aria Vance</h2>
+              <p class="text-xs text-[var(--text-muted)] font-bold uppercase tracking-wider" data-i18n="level_title">Junior Game Architect • Level 3</p>
+              <div class="flex items-center gap-2 mt-2">
+                <span class="text-xs font-bold text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full">🔥 5 Day Streak</span>
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">🎯 85% Accuracy</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="md:col-span-4 bg-[var(--bg-card-alt)] p-4 rounded-2xl border-2 border-[var(--border-color)] text-center">
+            <span class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider" data-i18n="xp_next">XP to Level 4</span>
+            <div class="text-2xl font-bold text-[var(--primary)] font-mono my-1">450 / 600 XP</div>
+            <div class="w-full bg-stone-200 rounded-full h-2.5">
+              <div class="bg-[var(--primary)] h-2.5 rounded-full" style="width: 75%"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Earned Badges Showcase -->
+      <div class="paper-card p-6 md:p-8 space-y-4">
+        <h3 class="text-2xl font-bold font-handwriting text-[var(--primary)]" data-i18n="badges_title">Earned Badge Collection</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="badges-grid">
+          <!-- Badges dynamically rendered here -->
+        </div>
+      </div>
+
+      <!-- Dynamic Certificate Generator Section -->
+      <div class="paper-card p-6 md:p-8 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h3 class="text-2xl font-bold font-handwriting text-[var(--primary)]" data-i18n="cert_title">Official Completion Certificate</h3>
+            <p class="text-xs text-[var(--text-muted)]" data-i18n="cert_desc">Generate and print your personalized certificate once you complete a track!</p>
+          </div>
+          <button onclick="printCertificate()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md flex items-center gap-2 transition-colors">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            <span data-i18n="print_cert">Print Certificate</span>
+          </button>
+        </div>
+
+        <!-- Printable Certificate Canvas Wrapper -->
+        <div id="printable-certificate" class="bg-[var(--bg-card-alt)] p-8 rounded-2xl border-4 border-double border-[var(--border-color)] text-center space-y-6 relative overflow-hidden">
+          <div class="text-xs font-bold uppercase tracking-widest text-amber-700" data-i18n="cert_header">TigerCode Academy • Certificate of Achievement</div>
+          <h2 class="text-3xl md:text-4xl font-bold font-handwriting text-[var(--text-main)]" data-i18n="cert_granted">This Certificate is Proudly Awarded To</h2>
+          <div id="cert-student-name" class="text-3xl md:text-5xl font-bold font-handwriting text-[var(--primary)] underline decoration-amber-300">Aria Vance</div>
+          <p class="max-w-xl mx-auto text-sm text-[var(--text-muted)]" data-i18n="cert_body">For successfully demonstrating proficiency in Block-Based Programming, Algorithmic Thinking, and Game Logic Architecture.</p>
+          <div class="flex justify-between items-end pt-8 px-6 border-t border-[var(--border-color)]">
+            <div class="text-left">
+              <span class="block text-xs text-[var(--text-muted)] font-bold">Issued On</span>
+              <span class="text-sm font-bold" id="cert-date">September 11, 2026</span>
+            </div>
+            <div class="text-center">
+              <span class="font-handwriting text-2xl text-[var(--primary)]">TigerCode Team</span>
+              <span class="block text-xs text-[var(--text-muted)] font-bold border-t border-stone-400 pt-1">Authorized Signature</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 5. PARENT DASHBOARD PAGE -->
+    <section id="page-parent" class="page-section hidden space-y-8">
+      <div class="paper-card p-6 md:p-8">
+        <div class="washi-tape"></div>
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h2 class="text-3xl font-bold font-handwriting text-[var(--primary)]" data-i18n="parent_title">Parent Guidance & Analytics Hub</h2>
+            <p class="text-sm text-[var(--text-muted)]" data-i18n="parent_desc">Monitor learning speed, quiz performance, and active study hours.</p>
+          </div>
+          <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">Verified Access</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="bg-[var(--bg-card-alt)] p-5 rounded-2xl border border-[var(--border-color)]">
+            <span class="text-xs font-bold text-[var(--text-muted)] uppercase" data-i18n="p_stat_1">Total Learning Hours</span>
+            <div class="text-3xl font-bold text-[var(--text-main)] my-1">12.5 hrs</div>
+            <span class="text-xs text-emerald-600 font-bold">↑ +2.1 hrs this week</span>
+          </div>
+
+          <div class="bg-[var(--bg-card-alt)] p-5 rounded-2xl border border-[var(--border-color)]">
+            <span class="text-xs font-bold text-[var(--text-muted)] uppercase" data-i18n="p_stat_2">Average Quiz Score</span>
+            <div class="text-3xl font-bold text-[var(--text-main)] my-1">92%</div>
+            <span class="text-xs text-emerald-600 font-bold">High Problem Solving</span>
+          </div>
+
+          <div class="bg-[var(--bg-card-alt)] p-5 rounded-2xl border border-[var(--border-color)]">
+            <span class="text-xs font-bold text-[var(--text-muted)] uppercase" data-i18n="p_stat_3">Completed Lessons</span>
+            <div class="text-3xl font-bold text-[var(--text-main)] my-1">8 / 12</div>
+            <span class="text-xs text-amber-600 font-bold">On Track for Certificate</span>
+          </div>
+        </div>
+
+        <!-- Activity Log Table -->
+        <div class="space-y-4">
+          <h3 class="text-xl font-bold font-handwriting" data-i18n="parent_activity">Recent Learning Activity</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm border-collapse">
+              <thead>
+                <tr class="border-b-2 border-[var(--border-color)] text-[var(--text-muted)] font-bold">
+                  <th class="py-3 px-4">Date</th>
+                  <th class="py-3 px-4">Activity Module</th>
+                  <th class="py-3 px-4">Score / Outcome</th>
+                  <th class="py-3 px-4">XP Earned</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[var(--border-color)]">
+                <tr>
+                  <td class="py-3 px-4">Sept 10, 2026</td>
+                  <td class="py-3 px-4 font-semibold">Loops & Repeat Blocks Quiz</td>
+                  <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded font-bold">100% Passed</span></td>
+                  <td class="py-3 px-4 font-bold text-amber-600">+100 XP</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4">Sept 08, 2026</td>
+                  <td class="py-3 px-4 font-semibold">Algorithms 101 Video Lesson</td>
+                  <td class="py-3 px-4"><span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded font-bold">Completed</span></td>
+                  <td class="py-3 px-4 font-bold text-amber-600">+50 XP</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Parent Security PIN Lock Modal -->
+  <div id="parent-pin-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="paper-card p-6 max-w-sm w-full space-y-4 text-center">
+      <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center mx-auto text-xl">🔒</div>
+      <h3 class="text-2xl font-bold font-handwriting" data-i18n="pin_title">Parent Access Lock</h3>
+      <p class="text-xs text-[var(--text-muted)]" data-i18n="pin_desc">Please enter the security PIN to access child analytics. (Default PIN: 1234)</p>
+      
+      <input type="password" id="parent-pin-input" placeholder="Enter PIN (1234)" class="w-full text-center tracking-widest text-lg p-3 rounded-xl border-2 border-[var(--border-color)] bg-[var(--bg-card-alt)] focus:outline-none" />
+      
+      <div class="flex gap-2">
+        <button onclick="closeModal('parent-pin-modal')" class="flex-1 py-2.5 border border-[var(--border-color)] font-bold rounded-xl">Cancel</button>
+        <button onclick="verifyParentPin()" class="flex-1 py-2.5 bg-[var(--primary)] text-white font-bold rounded-xl">Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Database Schema Architecture Modal -->
+  <div id="schema-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="paper-card p-6 md:p-8 max-w-4xl w-full max-h-[85vh] overflow-y-auto space-y-6">
+      <div class="flex justify-between items-center border-b-2 border-[var(--border-color)] pb-4">
+        <div>
+          <h3 class="text-2xl font-bold font-handwriting text-[var(--primary)]">Relational Database Architecture</h3>
+          <p class="text-xs text-[var(--text-muted)]">Relational schema design for TigerCode Academy (PostgreSQL/MySQL)</p>
+        </div>
+        <button onclick="closeModal('schema-modal')" class="p-2 hover:bg-[var(--bg-card-alt)] rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Relational Tables Overview -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+        <div class="p-3 bg-[var(--bg-card-alt)] rounded-xl border border-[var(--border-color)]">
+          <div class="font-bold text-amber-700 border-b pb-1 mb-2">Users Table</div>
+          <div>id (PK, UUID)</div>
+          <div>name, email, role</div>
+          <div>parent_id (FK)</div>
+          <div>xp_points, level</div>
+        </div>
+
+        <div class="p-3 bg-[var(--bg-card-alt)] rounded-xl border border-[var(--border-color)]">
+          <div class="font-bold text-amber-700 border-b pb-1 mb-2">Courses & Lessons</div>
+          <div>courses (id, title, desc)</div>
+          <div>lessons (id, course_id, sequence)</div>
+          <div>quizzes (id, lesson_id)</div>
+        </div>
+
+        <div class="p-3 bg-[var(--bg-card-alt)] rounded-xl border border-[var(--border-color)]">
+          <div class="font-bold text-amber-700 border-b pb-1 mb-2">Badges & Progress</div>
+          <div>badges (id, title, icon)</div>
+          <div>user_badges (user_id, badge_id)</div>
+          <div>certificates (user_id, date)</div>
+        </div>
+      </div>
+
+      <!-- Complete SQL Export Preview -->
+      <div class="space-y-2">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-bold text-[var(--text-muted)]">PostgreSQL DDL Schema Script</span>
+          <button onclick="copySQLSchema()" class="text-xs font-bold px-3 py-1 bg-[var(--bg-card-alt)] border border-[var(--border-color)] rounded-lg hover:bg-[var(--border-color)]">
+            Copy SQL
+          </button>
+        </div>
+        <pre class="bg-stone-900 text-emerald-400 p-4 rounded-xl text-xs font-mono overflow-x-auto max-h-60"><code>-- TigerCode Academy Relational Database Schema
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    role VARCHAR(20) CHECK (role IN ('Student', 'Parent', 'Admin')),
+    parent_id UUID REFERENCES users(id),
+    xp_points INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE courses (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(150) NOT NULL,
+    description TEXT,
+    difficulty_level VARCHAR(30)
+);
+
+CREATE TABLE lessons (
+    id SERIAL PRIMARY KEY,
+    course_id INT REFERENCES courses(id) ON DELETE CASCADE,
+    title VARCHAR(150) NOT NULL,
+    sequence_order INT NOT NULL,
+    video_url VARCHAR(255)
+);
+
+CREATE TABLE progress (
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    lesson_id INT REFERENCES lessons(id) ON DELETE CASCADE,
+    is_completed BOOLEAN DEFAULT FALSE,
+    completed_at TIMESTAMP,
+    PRIMARY KEY (user_id, lesson_id)
+);
+
+CREATE TABLE badges (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    icon_slug VARCHAR(50)
+);
+
+CREATE TABLE user_badges (
+    user_id UUID REFERENCES users(id),
+    badge_id INT REFERENCES badges(id),
+    earned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, badge_id)
+);</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       1. i18n DICTIONARY (English, Dari, Pashto)
+       ========================================================================== */
+    const i18n = {
+      en: {
+        academy_sub: "Creative Coding Academy",
+        nav_home: "Home",
+        nav_courses: "Courses",
+        nav_quizzes: "Quizzes",
+        nav_dashboard: "Student Hub",
+        nav_parent: "Parent Area",
+        schema_btn: "Database",
+        hero_badge: "Fun Coding for Ages 8–15",
+        hero_title_1: "Build Games & Code Stories with",
+        hero_title_2: "Visual Blocks!",
+        hero_desc: "Welcome to a cozy, creative space where algorithmic thinking turns into playful games, interactive art, and magical web projects.",
+        start_quest_btn: "Start Your Quest",
+        try_puzzle_btn: "Try Code Puzzles",
+        polaroid_caption: "My First Game Quest",
+        polaroid_sub: "Handcrafted Learning Experience",
+        feat_1_title: "Scratch Block Logic",
+        feat_1_desc: "Drag, drop, and snap code puzzle pieces together to control characters and design animations.",
+        feat_2_title: "Game Creation",
+        feat_2_desc: "Turn your imaginative ideas into playable mini-games while mastering variables and physics.",
+        feat_3_title: "Badges & Certificates",
+        feat_3_desc: "Earn verified completion certificates and fun badge stickers as you unlock new coding levels.",
+        pomo_title: "Cozy Focus Timer",
+        pomo_subtitle: "Study Helper",
+        pomo_desc: "Take structured 25-minute study sprints with 5-minute rest breaks for optimal focus.",
+        pomo_focus: "Focus Session",
+        mini_quiz_title: "Daily Brain Teaser",
+        mini_quiz_question: "Which code block makes the character repeat an action 10 times automatically?",
+        courses_title: "Interactive Learning Roadmap",
+        courses_subtitle: "Complete lessons in sequence to unlock game development challenges!",
+        track_progress: "Track Progress",
+        node_1_title: "Algorithms 101",
+        node_2_title: "Scratch Loops",
+        node_3_title: "If-Then Logic",
+        node_4_title: "Variables & Score",
+        node_5_title: "Game Capstone",
+        status_completed: "Completed",
+        status_active: "Current",
+        status_locked: "Locked",
+        code_lab_title: "Block Coding Simulator",
+        code_lab_sub: "Assemble visual code blocks to steer the star sprite to the gold star target!",
+        toolbox: "Toolbox Blocks",
+        workspace: "Your Code Stack",
+        run_code: "Run Execution",
+        quiz_title: "Algorithmic Puzzle Challenges",
+        quiz_subtitle: "Solve logic questions on loops, conditions, and variables to earn XP stickers!",
+        level_title: "Junior Game Architect • Level 3",
+        xp_next: "XP to Level 4",
+        badges_title: "Earned Badge Collection",
+        cert_title: "Official Completion Certificate",
+        cert_desc: "Generate and print your personalized certificate once you complete a track!",
+        print_cert: "Print Certificate",
+        cert_header: "TigerCode Academy • Certificate of Achievement",
+        cert_granted: "This Certificate is Proudly Awarded To",
+        cert_body: "For successfully demonstrating proficiency in Block-Based Programming, Algorithmic Thinking, and Game Logic Architecture.",
+        parent_title: "Parent Guidance & Analytics Hub",
+        parent_desc: "Monitor learning speed, quiz performance, and active study hours.",
+        p_stat_1: "Total Learning Hours",
+        p_stat_2: "Average Quiz Score",
+        p_stat_3: "Completed Lessons",
+        parent_activity: "Recent Learning Activity",
+        pin_title: "Parent Access Lock",
+        pin_desc: "Please enter the security PIN to access child analytics. (Default PIN: 1234)"
+      },
+      da: {
+        academy_sub: "آکادمی کدنویسی خلاقانه",
+        nav_home: "صفحه اصلی",
+        nav_courses: "دوره‌ها",
+        nav_quizzes: "آزمون‌ها",
+        nav_dashboard: "مرکز دانش‌آموز",
+        nav_parent: "بخش والدین",
+        schema_btn: "پایگاه داده",
+        hero_badge: "کدنویسی جذاب برای سنین ۸ تا ۱۵ سال",
+        hero_title_1: "ساخت بازی و داستان‌های کدنویسی با",
+        hero_title_2: "بلاک‌های بصری!",
+        hero_desc: "به یک فضای گرم و خلاقانه خوش آمدید که در آن تفکر الگوریتمی به بازی‌های مفرّح و پروژه‌های وب تبدیل می‌شود.",
+        start_quest_btn: "شروع ماموریت",
+        try_puzzle_btn: "امتحان پازل‌های کد",
+        polaroid_caption: "اولین ماموریت بازی من",
+        polaroid_sub: "تجربه یادگیری دست‌ساز",
+        feat_1_title: "منطق بلاکی اسکرچ",
+        feat_1_desc: "قطعات پازل کد را بکشید و رها کنید تا شخصیت‌ها را کنترل کنید.",
+        feat_2_title: "ساخت بازی",
+        feat_2_desc: "ایده‌های خلاقانه خود را به بازی‌های قابل بازی تبدیل کنید.",
+        feat_3_title: "نشان‌ها و گواهینامه‌ها",
+        feat_3_desc: "گواهینامه‌های رسمی و استیکرهای جذاب کسب کنید.",
+        pomo_title: "تایمر تمرکز درسی",
+        pomo_subtitle: "دستیار مطالعه",
+        pomo_desc: "جلسات مطالعه ۲۵ دقیقه‌ای را با ۵ دقیقه استراحت تجربه کنید.",
+        pomo_focus: "زمان تمرکز",
+        mini_quiz_title: "معمای روزانه کد",
+        mini_quiz_question: "کدام بلاک کد باعث می‌شود یک عمل ۱۰ بار تکرار شود؟",
+        courses_title: "نقشه راه یادگیری تعاملی",
+        courses_subtitle: "درس‌ها را به ترتیب تکمیل کنید تا چالش‌ها باز شوند!",
+        track_progress: "پیشرفت مسیر",
+        node_1_title: "مبانی الگوریتم",
+        node_2_title: "حلقه‌ها در اسکرچ",
+        node_3_title: "شرط‌های اگر-آنگاه",
+        node_4_title: "متغیرها و امتیاز",
+        node_5_title: "پروژه نهایی بازی",
+        status_completed: "تکمیل شده",
+        status_active: "فعلی",
+        status_locked: "قفل شده",
+        code_lab_title: "شبیه‌ساز کدنویسی بلاکی",
+        code_lab_sub: "بلاک‌های کد را بچینید تا شخصیت به ستاره طلایی برسد!",
+        toolbox: "جعبه ابزار بلاک‌ها",
+        workspace: "پشته کد شما",
+        run_code: "اجرای برنامه",
+        quiz_title: "چالش‌های پازل الگوریتمی",
+        quiz_subtitle: "پاسخ به سوالات منطقی برای کسب امتیاز XP!",
+        level_title: "معمار junior بازی • سطح ۳",
+        xp_next: "امتیاز تا سطح ۴",
+        badges_title: "مجموعه نشان‌های کسب شده",
+        cert_title: "گواهینامه رسمی پایان دوره",
+        cert_desc: "گواهینامه اختصاصی خود را تولید و چاپ کنید!",
+        print_cert: "چاپ گواهینامه",
+        cert_header: "آکادمی تایگرکد • گواهی افتخار",
+        cert_granted: "این گواهینامه با افتخار اهدا می‌شود به",
+        cert_body: "برای نشان دادن مهارت در برنامه نویسی بلاکی و تفکر الگوریتمی.",
+        parent_title: "مرکز راهنمایی و تحلیل والدین",
+        parent_desc: "نظارت بر سرعت یادگیری، نمرات آزمون و ساعات مطالعه.",
+        p_stat_1: "کل ساعات یادگیری",
+        p_stat_2: "میانگین نمره آزمون",
+        p_stat_3: "درس‌های تکمیل شده",
+        parent_activity: "فعالیت‌های اخیر یادگیری",
+        pin_title: "قفل امنیتی والدین",
+        pin_desc: "لطفاً رمز عبور را وارد کنید. (رمز پیش‌فرض: 1234)"
+      },
+      ps: {
+        academy_sub: "د نوښتګر کوډینګ اکاډمي",
+        nav_home: "اصلي صفحه",
+        nav_courses: "کورسونه",
+        nav_quizzes: "ازموینې",
+        nav_dashboard: "د زده‌کوونکي مرکز",
+        nav_parent: "د والدینو برخه",
+        schema_btn: "ډیټابیس",
+        hero_badge: "د ۸ تر ۱۵ کلنو لپاره په زړه پورې کوډینګ",
+        hero_title_1: "لوبې او د کوډ کیسې جوړې کړئ له",
+        hero_title_2: "بصري بلاکونو سره!",
+        hero_desc: "خوږ او تخلیقي فضا ته ښه راغلاست چیرې چې الگوریتمي فکر په زړه پورې لوبو بدلیږي.",
+        start_quest_btn: "ماموریت پیل کړئ",
+        try_puzzle_btn: "د کوډ پزلونه وازموئ",
+        polaroid_caption: "زما لومړی د لوبې ماموریت",
+        polaroid_sub: "د زده کړې بې ساري تجربه",
+        feat_1_title: "د سکریچ بلاک منطق",
+        feat_1_desc: "د کوډ ټوټې وباسئ او یوځای یې کړئ ترڅو کرکټرونه کنټرول کړئ.",
+        feat_2_title: "د لوبې جوړول",
+        feat_2_desc: "خپل فکرونه په زړه پورې لوبو بدل کړئ.",
+        feat_3_title: "نښې او تصدیق پاڼې",
+        feat_3_desc: "رسمي سندونه او په زړه پورې سټیکرونه ترلاسه کړئ.",
+        pomo_title: "د تمرکز ټایمر",
+        pomo_subtitle: "د مطالعې مرستیال",
+        pomo_desc: "د ۲۵ دقیقو مطالعې او ۵ دقیقو دمې لړۍ وازموئ.",
+        pomo_focus: "د تمرکز وخت",
+        mini_quiz_title: "ورځنۍ کوډ معما",
+        mini_quiz_question: "کوم بلاک کوډ عمل ۱۰ ځلې تکراروي؟",
+        courses_title: "د تعاملي زده کړې نقشه",
+        courses_subtitle: "سلسله وار لوستونه بشپړ کړئ ترڅو نوې برخې خلاصې شي!",
+        track_progress: "د پرمختګ حالت",
+        node_1_title: "د الگوریتم اساسات",
+        node_2_title: "په سکریچ کې لوپونه",
+        node_3_title: "که-نو منطق",
+        node_4_title: "تغیرات او نمرې",
+        node_5_title: "وروستۍ پروژه",
+        status_completed: "بشپړ شوی",
+        status_active: "جاري",
+        status_locked: "قفل شوی",
+        code_lab_title: "د بلاک کوډینګ شبیه‌ساز",
+        code_lab_sub: "بلاکونه تنظیم کړئ ترڅو کرکټر طلایی ستوري ته ورسیږي!",
+        toolbox: "د بلاکونو اوزار بکس",
+        workspace: "ستاسو د کوډ کڅوړه",
+        run_code: "پروګرام اجرا کړئ",
+        quiz_title: "د الگوریتم پزل ننګونې",
+        quiz_subtitle: "منطقي پوښتنو ته ځواب ورکړئ او XP ترلاسه کړئ!",
+        level_title: "د لوبو جونیئر معمار • کچه ۳",
+        xp_next: "څلورمې کچې ته د پاتې XP نمرې",
+        badges_title: "ترلاسه شوې نښې",
+        cert_title: "رسمي تصدیق پاڼه",
+        cert_desc: "خپل ځانګړی سند جوړ او چاپ کړئ!",
+        print_cert: "سند چاپ کړئ",
+        cert_header: "تایګرکوډ اکاډمي • د لاسته راوړنې سند",
+        cert_granted: "دا سند په ویاړ ورکول کیږي",
+        cert_body: "په بلاکي پروګرامینګ او الگوریتمي فکر کې د مهارت ښودلو لپاره.",
+        parent_title: "د والدینو لارښود او تحلیل مرکز",
+        parent_desc: "د زده کړې سرعت او تمرین نظارت کړئ.",
+        p_stat_1: "ټول مطالعې ساعتونه",
+        p_stat_2: "د ازموینې اوسط نمره",
+        p_stat_3: "بشپړ شوي لوستونه",
+        parent_activity: "وروستي د زده کړې فعالیتونه",
+        pin_title: "د والدینو امنیتي قفل",
+        pin_desc: "مهرباني وکړئ پن کوډ داخل کړئ. (اصلي پن: 1234)"
+      }
+    };
+
+    /* App Global State */
+    let currentState = {
+      theme: 'cozy-scrapbook',
+      lang: 'en',
+      xp: 250,
+      userCodeStack: [],
+      timerSeconds: 25 * 60,
+      timerRunning: false,
+      timerInterval: null
+    };
+
+    // Initialize application on page load
+    window.onload = function() {
+      lucide.createIcons();
+      loadStateFromStorage();
+      renderBadges();
+      updatei18n();
+    };
+
+    /* Navigation Controller */
+    function switchPage(pageId) {
+      document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
+      document.getElementById(`page-${pageId}`).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-[var(--bg-card)]', 'text-[var(--primary)]', 'shadow-sm');
+        btn.classList.add('text-[var(--text-muted)]');
+      });
+
+      const activeNav = document.getElementById(`nav-${pageId}`);
+      if (activeNav) {
+        activeNav.classList.add('bg-[var(--bg-card)]', 'text-[var(--primary)]', 'shadow-sm');
+        activeNav.classList.remove('text-[var(--text-muted)]');
+      }
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    }
+
+    /* Theme Switcher Logic */
+    function changeTheme(themeName) {
+      currentState.theme = themeName;
+      document.documentElement.setAttribute('data-theme', themeName);
+      localStorage.setItem('tc_theme', themeName);
+    }
+
+    /* Language Switcher & RTL Logic */
+    function changeLanguage(langCode) {
+      currentState.lang = langCode;
+      document.documentElement.setAttribute('lang', langCode);
+      
+      // Set Direction based on language (RTL for Dari/Pashto)
+      if (langCode === 'da' || langCode === 'ps') {
+        document.documentElement.setAttribute('dir', 'rtl');
+      } else {
+        document.documentElement.setAttribute('dir', 'ltr');
+      }
+
+      localStorage.setItem('tc_lang', langCode);
+      updatei18n();
+    }
+
+    function updatei18n() {
+      const dict = i18n[currentState.lang] || i18n['en'];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.textContent = dict[key];
+      });
+    }
+
+    function loadStateFromStorage() {
+      const savedTheme = localStorage.getItem('tc_theme') || 'cozy-scrapbook';
+      const savedLang = localStorage.getItem('tc_lang') || 'en';
+      
+      document.getElementById('theme-select').value = savedTheme;
+      document.getElementById('lang-select').value = savedLang;
+      
+      changeTheme(savedTheme);
+      changeLanguage(savedLang);
+    }
+
+    /* Modals Control */
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    /* Parent Modal Lock Security */
+    function openParentModal() {
+      openModal('parent-pin-modal');
+    }
+
+    function verifyParentPin() {
+      const input = document.getElementById('parent-pin-input').value;
+      if (input === '1234') {
+        closeModal('parent-pin-modal');
+        switchPage('parent');
+      } else {
+        alert('Incorrect PIN! Try default PIN: 1234');
+      }
+    }
+
+    /* Pomodoro Focus Timer Logic */
+    function toggleTimer() {
+      const btn = document.getElementById('timer-start-btn');
+      if (currentState.timerRunning) {
+        clearInterval(currentState.timerInterval);
+        currentState.timerRunning = false;
+        btn.textContent = "Start Focus";
+      } else {
+        currentState.timerRunning = true;
+        btn.textContent = "Pause Timer";
+        currentState.timerInterval = setInterval(() => {
+          if (currentState.timerSeconds > 0) {
+            currentState.timerSeconds--;
+            updateTimerDisplay();
+          } else {
+            clearInterval(currentState.timerInterval);
+            alert("Focus session complete! Take a 5 minute break ☕");
+            resetTimer();
+          }
+        }, 1000);
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(currentState.timerInterval);
+      currentState.timerRunning = false;
+      currentState.timerSeconds = 25 * 60;
+      document.getElementById('timer-start-btn').textContent = "Start Focus";
+      updateTimerDisplay();
+    }
+
+    function updateTimerDisplay() {
+      const m = Math.floor(currentState.timerSeconds / 60).toString().padStart(2, '0');
+      const s = (currentState.timerSeconds % 60).toString().padStart(2, '0');
+      document.getElementById('timer-display').textContent = `${m}:${s}`;
+    }
+
+    /* Mini Brain Teaser Quick Feedback */
+    function checkMiniQuiz(btn, isCorrect) {
+      const feedback = document.getElementById('mini-quiz-feedback');
+      feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+      if (isCorrect) {
+        feedback.classList.add('bg-emerald-100', 'text-emerald-800');
+        feedback.textContent = "✨ Correct! 'repeat (10)' loops actions 10 times automatically (+50 XP)!";
+        confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+      } else {
+        feedback.classList.add('bg-rose-100', 'text-rose-800');
+        feedback.textContent = "❌ Oops! Give it another try. Look for loop commands!";
+      }
+    }
+
+    /* Scratch-like Visual Block Coding Simulator Engine */
+    function addBlockToWorkspace(blockName) {
+      currentState.userCodeStack.push(blockName);
+      renderWorkspace();
+    }
+
+    function renderWorkspace() {
+      const container = document.getElementById('code-workspace');
+      const emptyMsg = document.getElementById('empty-workspace-msg');
+      
+      if (currentState.userCodeStack.length === 0) {
+        emptyMsg.classList.remove('hidden');
+        container.innerHTML = '';
+        container.appendChild(emptyMsg);
+        return;
+      }
+      
+      emptyMsg.classList.add('hidden');
+      container.innerHTML = '';
+      
+      currentState.userCodeStack.forEach((block, idx) => {
+        const div = document.createElement('div');
+        div.className = "p-2.5 bg-amber-400 text-stone-900 text-xs font-bold rounded-lg flex justify-between items-center shadow-sm";
+        div.innerHTML = `<span>${idx + 1}. ${block}</span> <button onclick="removeBlock(${idx})" class="text-xs text-stone-700 hover:text-black">✕</button>`;
+        container.appendChild(div);
+      });
+    }
+
+    function removeBlock(idx) {
+      currentState.userCodeStack.splice(idx, 1);
+      renderWorkspace();
+    }
+
+    function resetCodeLab() {
+      currentState.userCodeStack = [];
+      renderWorkspace();
+      const char = document.getElementById('sprite-character');
+      char.style.left = '24px';
+      document.getElementById('lab-feedback').textContent = "Ready to run your algorithm!";
+    }
+
+    function runBlockCode() {
+      if (currentState.userCodeStack.length === 0) {
+        alert("Please add code blocks from the toolbox first!");
+        return;
+      }
+
+      const char = document.getElementById('sprite-character');
+      const feedback = document.getElementById('lab-feedback');
+      feedback.textContent = "Executing algorithm...";
+
+      // Simple animation sequence simulation based on stack length
+      let moveDistance = currentState.userCodeStack.length * 40;
+      char.style.left = `${Math.min(24 + moveDistance, 280)}px`;
+
+      setTimeout(() => {
+        if (moveDistance >= 120) {
+          feedback.textContent = "🎉 Target Reached! Great Job Architecture!";
+          confetti({ particleCount: 70, spread: 70, origin: { y: 0.6 } });
+        } else {
+          feedback.textContent = "Almost there! Add more move or loop blocks to reach the star!";
+        }
+      }, 600);
+    }
+
+    /* Badges Display */
+    function renderBadges() {
+      const badges = [
+        { icon: "🧩", title: "Loop Master", desc: "Completed 5 loop puzzles" },
+        { icon: "⚡", title: "Quick Logic", desc: "Answered quiz in 10s" },
+        { icon: "🎨", title: "Game Maker", desc: "Created 1st game project" },
+        { icon: "🐛", title: "Bug Hunter", desc: "Fixed 3 algorithm bugs" }
+      ];
+
+      const grid = document.getElementById('badges-grid');
+      grid.innerHTML = badges.map(b => `
+        <div class="bg-[var(--bg-card-alt)] p-4 rounded-2xl border-2 border-[var(--border-color)] text-center space-y-2">
+          <div class="text-3xl">${b.icon}</div>
+          <div class="font-bold text-sm text-[var(--text-main)]">${b.title}</div>
+          <div class="text-xs text-[var(--text-muted)]">${b.desc}</div>
+        </div>
+      `).join('');
+    }
+
+    /* Print Certificate Trigger */
+    function printCertificate() {
+      window.print();
+    }
+
+    /* Copy Database SQL Script */
+    function copySQLSchema() {
+      const code = document.querySelector('#schema-modal code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        alert("Database SQL schema copied to clipboard!");
+      });
+    }
+  </script>
+
+</body>
+</html>
